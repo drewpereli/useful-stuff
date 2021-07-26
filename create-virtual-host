@@ -1,0 +1,63 @@
+#! /bin/bash
+
+if [ -z "$1" ]
+then
+  echo "Please specify a site as the first argument"
+  exit 1
+fi
+
+domain=$1
+dir="/var/www/$domain"
+public_html="$dir/public_html"
+
+echo "Creating $public_html..."
+
+sudo mkdir -p $public_html
+
+sudo chown -R $USER:$USER $dir
+sudo chmod -R 755 $dir
+
+html_sample="<html>
+  <head>
+    <title>Welcome to ${domain}!</title>
+  </head>
+  <body>
+    <h1>Success! The ${domain} virtual host is working!</h1>
+  </body>
+</html>"
+
+
+echo "Writing html sample to ${public_html}..."
+
+sudo echo "$html_sample" > "$public_html/index.html"
+
+echo "Writing virtual host config file..."
+
+config_file="/etc/apache2/sites-available/${domain}.conf"
+
+sudo cp /etc/apache2/sites-available/000-default.conf $config_file
+
+vhost="<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName ${domain}
+    ServerAlias www.${domain}
+    DocumentRoot /var/www/${domain}/public_html
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>"
+
+sudo chmod 777 $config_file
+
+sudo echo "$vhost" > $config_file
+
+sudo chmod 775 $config_file
+
+echo "Enabling site..."
+
+sudo a2ensite "${domain}.conf"
+
+echo "Restarting apache..."
+
+sudo systemctl restart apache2
+
+echo "Virtual host created!"
