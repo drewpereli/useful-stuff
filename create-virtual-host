@@ -60,4 +60,8 @@ echo "Restarting apache..."
 
 sudo systemctl restart apache2
 
+echo "Securing with ssl..."
+
+sudo certbot --apache -d ${domain} -d www.${domain}
+
 echo "Virtual host created!"
