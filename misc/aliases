@@ -1,0 +1,67 @@
+# Unix
+alias ll="ls -al"
+alias ln="ln -v"
+alias mkdir="mkdir -p"
+alias e="$EDITOR"
+alias v="$VISUAL"
+alias ...='../..'
+alias rmrf='rm -rf'
+alias clear-downloads='rm -rf ~/Downloads/*'
+alias t='touch'
+alias sds='sh ./drew-scratch.sh'
+
+# Git
+alias glog="git log --graph --pretty=format:'%Cred%h%Creset %an: %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset' --abbrev-commit --date=relative"
+alias gs='git status -sb'
+alias gc='git commit'
+alias gcm='git commit -m'
+alias gcf='git commit --fixup'
+alias gcam='git commit -am'
+alias gcan='git commit --amend --no-edit'
+alias gcaan='git commit -a --amend --no-edit'
+alias gp='git push'
+alias ga='git add'
+alias gaa='git add -A'
+alias grc='git rebase --continue'
+alias git-delete-squashed='git checkout -q master && git for-each-ref refs/heads/ "--format=%(refname:short)" | while read branch; do mergeBase=$(git merge-base master $branch) && [[ $(git cherry master $(git commit-tree $(git rev-parse $branch\^{tree}) -p $mergeBase -m _)) == "-"* ]] && git branch -D $branch; done'
+
+function gria(){
+  git rebase -i @~$1
+}
+
+function grb(){
+  git rebase -i $1^
+}
+
+
+# Node
+alias nom='rm -rf node_modules && npm install'
+alias nombom='npm cache clear && bower cache clean && rm -rf node_modules bower_components && npm install && bower install'
+alias ni='node index.js'
+alias nds='node drew-scratch.js'
+alias nmds='nodemon drew-scratch.js'
+
+# Postgres
+alias restart-postgres="rm /usr/local/var/postgres/postmaster.pid; launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist; launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
+
+# Ruby
+alias install-missing-ruby="brew update && brew upgrade ruby-build && rbenv install"
+alias fs='foreman start'
+alias beg='bundle exec guard'
+alias ber='bundle exec rubocop'
+alias r='rails'
+alias rdbm='rails db:migrate'
+alias rdbms='rails db:migrate:status'
+
+function rdbr(){
+  rails db:rollback STEP=$1
+}
+
+# Ember
+alias em='ember'
+alias ems='ember serve'
+alias emt='ember test'
+alias emts='ember test --server'
+alias emx='ember exam'
+alias emxs='ember exam --server'
+alias emxsf='ember exam --server --file=path='
