@@ -1,0 +1,72 @@
+{
+	// Place your snippets for javascript here. Each snippet is defined under a snippet name and has a prefix, body and
+	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the
+	// same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+
+	"Invoke anonymous async function": {
+		"prefix": "iasync",
+		"body": [
+			"(async () => {",
+			"  $1",
+			"})();",
+			"$2"
+		],
+	},
+
+	"Require promisify": {
+		"prefix": "rpromisify",
+		"body": [
+			"const promisify = require('util').promisify;",
+			"$2"
+		]
+	},
+
+	"Require path resolve": {
+		"prefix": "rpathresolve",
+		"body": [
+			"const pr = require('path').resolve;",
+			"$2"
+		]
+	},
+
+	"Await timeout": {
+		"prefix": "awaittimeout",
+		"body": [
+			"await new Promise(res => setTimeout(res, ${1:1000}));",
+		]
+	},
+
+	"Import faker": {
+		"prefix": "efaker",
+		"body": [
+			"import faker from 'faker';",
+			"$2"
+		]
+	},
+
+	"Import setupPlaylistTest": {
+		"prefix": "E:setupPlaylistTest",
+		"body": [
+			"import { setupPlaylistTest } from 'app-kit/tests/helpers/test-setup-helpers';",
+			"$2"
+		]
+	},
+
+	"Import rand": {
+		"prefix": "E:rand",
+		"body": [
+			"import { rand } from 'app-kit/tests/helpers/custom-helpers';",
+			"$2"
+		]
+	}
+}
