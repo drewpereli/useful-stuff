@@ -1,0 +1,6 @@
+{{!-- template-lint-disable require-input-label --}}
+<div class="flex flex-col">
+  <Input @value={{this.username}} placeholder="Username" />
+  <Input @value={{this.password}} @type="password" placeholder="Password" />
+  <button type="button" {{on "click" this.onSubmit.perform}}>Submit</button>
+</div>

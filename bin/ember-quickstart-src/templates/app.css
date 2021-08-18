@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.flash-message {
+  @apply px-8 py-4 border rounded text-white text-opacity-80;
+}
+
+.flash-message.alert-success {
+  @apply border-green-200 bg-green-500;
+}
+
+.flash-message.alert-danger {
+  @apply border-red-200 bg-red-500;
+}
+
+.plotly svg {
+  /* fix modeBar display */
+  display: initial;
+  vertical-align: initial;
+
+  /* prevent weird "Aa" text from showing up in legend points */
+  & g.pointtext {
+    display: none;
+  }
+}

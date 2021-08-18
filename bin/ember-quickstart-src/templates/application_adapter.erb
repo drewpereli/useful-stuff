@@ -1,0 +1,19 @@
+import ActiveModelAdapter from 'active-model-adapter';
+import ENV from '<%= app_name %>/config/environment';
+import { inject as service } from '@ember/service';
+
+export default class ApplicationAdapter extends ActiveModelAdapter {
+  @service session;
+
+  host = ENV.APP.apiHost;
+
+  get headers() {
+    if (this.session.isAuthenticated) {
+      return {
+        Authorization: `Bearer ${this.session.data.authenticated.token}`,
+      };
+    } else {
+      return {};
+    }
+  }
+}
