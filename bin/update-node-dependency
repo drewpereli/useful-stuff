@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+    echo "No arguments provided"
+    exit 1
+fi
+
+VERSION=$(npm view $1 version)
+echo "Installing $1@latest..."
+npm i $1@latest
+echo "Updated $1 to $VERSION"
+echo "Comitting changes..."
+git add package.json
+git add package-lock.json
+git commit -m "Update $1 to $VERSION"
+echo "Done"

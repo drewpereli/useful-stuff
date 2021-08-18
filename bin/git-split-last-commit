@@ -1,0 +1,10 @@
+#!/bin/sh
+
+message=$(git log -1 --pretty=%B)
+
+git reset @^;
+
+for f in $(git status --porcelain | sed s/^...//); do
+  git add $f;
+  git commit -m "$message -- $f (split commit)";
+done

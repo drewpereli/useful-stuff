@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ $# -ne 2 ] && [ $# -ne 3 ]; then
+    echo "You must provide two or three arguments"
+    exit 1
+fi
+
+if [ $# -eq 2 ]; then
+  source_file=$1
+  target_file=$2
+else
+  commit_range=$1
+  source_file=$2
+  target_file=$3
+fi
+
+
+git diff $commit_range -- $source_file > tmp_patch.diff
+patch -p0 $target_file < tmp_patch.diff
+rm tmp_patch.diff
+rm $target_file.orig

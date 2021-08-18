@@ -1,0 +1,6 @@
+#!/bin/sh
+
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+new_branch="$current_branch--backup-$(date '+%s')"
+git branch $new_branch
+echo "Backup branch created at $new_branch"
