@@ -24,9 +24,14 @@ alias ga='git add'
 alias gaa='git add -A'
 alias grc='git rebase --continue'
 alias git-delete-squashed='git checkout -q master && git for-each-ref refs/heads/ "--format=%(refname:short)" | while read branch; do mergeBase=$(git merge-base master $branch) && [[ $(git cherry master $(git commit-tree $(git rev-parse $branch\^{tree}) -p $mergeBase -m _)) == "-"* ]] && git branch -D $branch; done'
+alias git-reset-super='git clean -f -d && git reset --hard'
 
 function gria(){
   git rebase -i @~$1
+}
+
+function gr(){
+  git rebase -i $1
 }
 
 function grb(){
