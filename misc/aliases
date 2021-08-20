@@ -1,11 +1,5 @@
 # Unix
-alias ll="ls -al"
-alias ln="ln -v"
 alias mkdir="mkdir -p"
-alias e="$EDITOR"
-alias v="$VISUAL"
-alias ..='cd ..'
-alias ...='cd ../..'
 alias rmrf='rm -rf'
 alias clear-downloads='rm -rf ~/Downloads/*'
 alias t='touch'
