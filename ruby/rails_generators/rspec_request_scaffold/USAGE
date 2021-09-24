@@ -1,0 +1,10 @@
+Description:
+    Creates a nice scaffold of tests for a request resource.
+    It will automatically detect the available actions for the given model,
+    and only include tests for those actions.
+
+Example:
+    bin/rails generate rspec_request_scaffold Thing
+
+    This will create:
+        spec/requests/things_spec.rb

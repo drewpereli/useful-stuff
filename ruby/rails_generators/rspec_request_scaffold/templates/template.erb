@@ -1,0 +1,91 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+RSpec.describe "<%= class_name.pluralize %>", type: :request do
+  include_context "with authenticated_headers"
+
+  let(:user) { create(:user) }
+
+  let(:parsed_body) { JSON.parse(response.body) }
+<% if included_actions.include?("index") %>
+  describe "GET index" do
+    subject(:get_index) { get "/<%= plural_name %>", headers: authenticated_headers }
+
+    let(:response_ids) do
+      parsed_body["<%= plural_name %>"].map { |record| record["id"] }
+    end
+
+    before do
+      create_list(:<%= singular_name %>, 10)
+    end
+
+    it "responds with the <%= class_name %> records " do
+      get_index
+      expect(response_ids).to match_array(<%= class_name %>.ids)
+    end
+  end
+<% end %><% if included_actions.include?("show") %>
+  describe "GET show" do
+    subject(:get_show) { get "/<%= plural_name %>/#{<%= singular_name %>.id}", headers: authenticated_headers }
+
+    let!(:<%= singular_name %>) { create(:<%= singular_name %>) }
+
+    it "gets the requested <%= class_name %>" do
+      get_show
+
+      expect(parsed_body["<%= singular_name %>"]["id"]).to eql(<%= singular_name %>.id)
+    end
+  end
+<% end %><% if included_actions.include?("create") %>
+  describe "POST create" do
+    subject(:post_create) { post "/<%= plural_name %>", params: {<%= singular_name %>: create_params}, headers: authenticated_headers }
+
+    let(:create_params) do
+      pending("adding create params")
+      # {<% model_writable_attrs_with_suggested_values.each do |attr| %>
+      #   <%= attr[:name] %>: <%= attr[:suggested_value]%>,<% end %>
+      # }
+    end
+
+    it "creates a new <%= class_name %>" do
+      expect { post_create }.to change(<%= class_name %>, :count).by(1)
+    end
+  end
+<% end %><% if included_actions.include?("update") %>
+  describe "PUT update" do
+    subject(:put_update) do
+      put "/<%= plural_name %>/#{<%= singular_name %>.id}",
+          params: {<%= singular_name %>: update_params},
+          headers: authenticated_headers
+    end
+
+    let!(:<%= singular_name %>) { create(:<%= singular_name %>) }
+
+    let(:update_params) do
+      pending("adding update params")
+      # {<%= model_writable_attrs.first %>: "my changed val"}
+    end
+
+    it "updates the requested <%= class_name %>" do
+      put_update
+      <%= singular_name %>.reload
+      pending("testing update attrs")
+      # expect(<%= singular_name %>.<%= model_writable_attrs.first %>).to eql("my changed val")
+    end
+  end
+<% end %><% if included_actions.include?("destroy") %>
+  describe "DELETE destroy" do
+    subject(:delete_destroy) { delete "/<%= plural_name %>/#{<%= singular_name %>.id}", headers: authenticated_headers }
+
+    let!(:<%= singular_name %>) { create(:<%= singular_name %>) }
+
+    it "destroys the requested <%= class_name %>" do
+      expect { delete_destroy }.to change(<%= class_name %>, :count).by(-1)
+    end
+  end<% end %><% included_non_standard_actions.each do |action| %>
+
+  describe "<%= action %>" do
+    pending("Testing <%= action %>")
+  end<% end %>
+end
