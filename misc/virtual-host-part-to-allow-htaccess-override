@@ -1,0 +1,13 @@
+# this was in the ssl conf
+<Directory /wherever/the/htaccess/file/is>
+  Options Indexes FollowSymLinks MultiViews
+  AllowOverride All
+  Order allow,deny
+  allow from all
+</Directory>
+
+# this is in the regular conf
+RewriteEngine on
+RewriteCond %{SERVER_NAME} =www.your_domain.com [OR]
+RewriteCond %{SERVER_NAME} =your_domain.com
+RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
