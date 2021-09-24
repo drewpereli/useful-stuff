@@ -54,7 +54,8 @@ alias rdbm='rails db:migrate'
 alias rdbms='rails db:migrate:status'
 
 function rdbr(){
-  rails db:rollback STEP=$1
+  local steps="${1:-"1"}"
+  rails db:rollback STEP=$steps
 }
 
 # Ember
