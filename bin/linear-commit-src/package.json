@@ -1,0 +1,22 @@
+{
+  "name": "linear-commit-src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "out/index.js",
+  "dependencies": {
+    "@linear/sdk": "^1.21.0",
+    "child-process-promise": "^2.2.1",
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/child-process-promise": "^2.2.2",
+    "@types/node": "^16.11.7",
+    "typescript": "^4.4.4"
+  },
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
