@@ -1,0 +1,3 @@
+#!/bin/sh
+
+code --wait -d $1 $2
