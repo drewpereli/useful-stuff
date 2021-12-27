@@ -1,0 +1,5 @@
+# Add this in the virtual host block itself. Make sure to add it to the ssl config if it's an ssl site.
+
+<FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf|woff2)$">
+  Header set Cache-Control "max-age=63072000, public"
+</FilesMatch>
