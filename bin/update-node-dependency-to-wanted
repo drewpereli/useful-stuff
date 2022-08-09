@@ -1,0 +1,67 @@
+#!/usr/bin/env node
+
+const { exec } = require('child_process');
+const { promisify } = require('util');
+const execPromise = promisify(exec);
+
+async function execResponse(command) {
+  const res = await execPromise(command);
+  return res.stdout;
+}
+
+async function update() {
+  const package = process.argv[2];
+
+  if (!package) {
+    console.error('No package specified');
+    return;
+  }
+
+  const currentVersion = await getVersion(package);
+
+  if (!currentVersion) {
+    console.error(`No version found for ${package}`);
+    return;
+  }
+
+  console.log(`Updating ${package}...`);
+
+  await execPromise(`npm update ${package}`);
+
+  const newVersion = await getVersion(package);
+
+  console.log(newVersion);
+
+  if (newVersion === currentVersion) {
+    console.log(`${package} is already at the latest version`);
+    return;
+  }
+
+  console.log(`${package} updated from ${currentVersion} to ${newVersion}`);
+
+  const message = `Update ${package} from ${currentVersion} to ${newVersion}`;
+
+  await execPromise(`git add package.json package-lock.json`);
+  await execPromise(`git commit -m "${message}"`);
+}
+
+async function getVersion(package) {
+  const res = await execResponse(`npm list ${package} --depth=0 --json`);
+  return JSON.parse(res).dependencies[package].version;
+}
+
+function getVersionFromListed(listed) {
+  const regex = /@(\d+\.\d+\.\d+)$/;
+
+  const match = listed.match(regex);
+
+  if (!match) {
+    return;
+  }
+
+  const version = listed.match(regex)[1];
+
+  return version;
+}
+
+update();
