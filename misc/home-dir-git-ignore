@@ -17,3 +17,4 @@ tmp/**/*
 drew-scratch*
 drew_scratch*
 /.vscode/
+*.rdb
