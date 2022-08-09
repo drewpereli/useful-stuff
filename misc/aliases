@@ -46,6 +46,7 @@ alias nmds='nodemon drew-scratch.js'
 
 # Postgres
 alias restart-postgres="rm /usr/local/var/postgres/postmaster.pid; launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist; launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
+alias snapdb="psql -U postgres -d snap_sandbox_development"
 
 # Ruby
 alias install-missing-ruby="brew update && brew upgrade ruby-build && rbenv install"
