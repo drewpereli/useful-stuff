@@ -56,6 +56,7 @@ alias ber='bundle exec rubocop'
 alias r='rails'
 alias rdbm='rails db:migrate'
 alias rdbms='rails db:migrate:status'
+alias update-schema-rebase='git reset HEAD db/schema.rb && git checkout db/schema.rb && rails db:migrate && git add -A'
 
 function rdbr(){
   local steps="${1:-"1"}"
