@@ -1,0 +1,113 @@
+#!/usr/bin/env ruby
+
+def migration_files
+  puts "Getting migration files that aren't in master..."
+
+  `git diff master --name-only`.split("\n").filter { |file|
+    /db\/migrate\//.match(file)
+  }.map { |file|
+    file.gsub("db/migrate/", "")
+  }.sort
+end
+
+def update_migration_file(name, offset)
+  time = Time.now + offset * 60
+  formatted_timestamp = time.strftime("%Y%m%d%H%M%S")
+  new_name = name.gsub(/\d{14}/, formatted_timestamp)
+  puts "Updating #{name} to #{new_name}"
+  File.rename("db/migrate/#{name}", "db/migrate/#{new_name}")
+end
+
+def extract_version_from_file_name(name)
+  name.match(/\d{14}/)[0]
+end
+
+def rollback_migration_from_version(version)
+  system("rails db:migrate:down VERSION=#{version}")
+end
+
+def up_migration_status_data_from_file_names(names)
+  file_name_versions = names.map { |n| extract_version_from_file_name(n) }
+
+  status_data.filter { |d|
+    d[:status] == "up" && file_name_versions.include?(d[:version])
+  }
+end
+
+def status_data
+  `rails db:migrate:status`.split("\n").map { |line|
+    status_data_from_status_line(line)
+  }.compact
+end
+
+def status_data_from_status_line(line)
+  match = line.match(/^\s*(\w+)\s+(\d+)\s+(.+)$/)
+
+  return nil if match.nil?
+
+  status, version, message = match.captures
+
+  {status: status, version: version, message: message}
+end
+
+def human_readable_migration_data(data)
+  "#{data[:version]} (#{data[:message]})"
+end
+
+def rollback_up_migrations_with_confirmation(files)
+  up_migrations = up_migration_status_data_from_file_names(files)
+
+  return true if up_migrations.empty?
+
+  puts "The following migrations will be rolled back:"
+  up_migrations.each do |m|
+    puts human_readable_migration_data(m)
+  end
+  puts "Continue? (Y/n)"
+  answer = gets
+
+  if answer.strip != "Y"
+    puts "Aborting"
+    return false
+  end
+
+  up_migrations.all? { |m|
+    puts "Rollinig back #{human_readable_migration_data(m)}"
+    rollback_migration_from_version(m[:version])
+  }
+end
+
+def filter_out_up_migrations(files)
+  data = status_data
+  
+  files.filter { |file|
+    version = extract_version_from_file_name(file)
+
+    data_for_migration = data.find { |d| d[:version] == version }
+
+    data_for_migration[:status] == "down"
+  }
+end
+
+def update
+  files = migration_files
+
+  if files.count == 0
+    puts "No migration files found"
+    return
+  end
+
+  if ARGV.include?("--down-only")
+    files = filter_out_up_migrations(files)
+  else
+    return unless rollback_up_migrations_with_confirmation(files)
+  end
+
+  files.each_with_index do |file, idx|
+    offset = idx - files.length
+
+    update_migration_file(file, offset)
+  end
+end
+
+update
