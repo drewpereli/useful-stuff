@@ -23,6 +23,7 @@ alias git-delete-squashed='git checkout -q master && git for-each-ref refs/heads
 alias git-delete-backups='git checkout -q master && git branch | grep -E "\-\-backup-\d+$" | xargs git branch -D'
 alias git-reset-super='git clean -f -d && git reset --hard'
 alias gspum='git stash push -u -m'
+alias git-show-migration-commits='git log --oneline --follow master..@ -- ./db/migrate'
 
 function gria(){
   git rebase -i @~$1
