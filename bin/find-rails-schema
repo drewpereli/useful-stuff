@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+
+const { exec } = require('child_process');
+
+const fs = require('fs').promises;
+
+async function findSchema(name) {
+  const schema = String(await fs.readFile('./db/schema.rb'));
+
+  const lines = schema.split('\n');
+
+  const lineNum = lines.findIndex((line) =>
+    line.includes(`create_table "${name}"`)
+  );
+
+  if (lineNum === -1) {
+    console.error(`Could not find schema "${name}"`);
+    return;
+  }
+
+  exec(`code  -g ./db/schema.rb:${lineNum + 1}`);
+}
+
+findSchema(process.argv[2]);
