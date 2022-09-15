@@ -1,0 +1,15 @@
+[
+  {
+    "title": "File IO",
+    "data": [
+      ["File.write(\"log.txt\", \"data...\")", "Write file"]
+    ]
+  },
+  {
+    "title": "Array",
+    "data": [
+      ["%w[abc def ghi]", "Equals <code>[\"abc\", \"def\", \"ghi\"]</code>"],
+      ["%i[abc def ghi]", "Equals <code>[:abc, :def, :ghi]</code>"]
+    ]
+  }
+]
