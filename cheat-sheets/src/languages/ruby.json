@@ -2,8 +2,10 @@
   {
     "title": "File IO",
     "data": [
+      ["file = File.read(\"./file.whatever\")", "Get the text content of a file"],
       ["File.write(\"log.txt\", \"data...\")", "Write file"],
-      ["File.rename(source_path, target_path)", "Move/rename a file"]
+      ["File.rename(source_path, target_path)", "Move/rename a file"],
+      ["file = File.read(\"./file.json\")\nparsed = JSON.parse(file)", "Parse a JSON file"]
     ]
   },
   {
