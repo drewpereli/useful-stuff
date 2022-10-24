@@ -29,7 +29,7 @@ function gria(){
   git rebase -i @~$1
 }
 
-function gr(){
+function gri(){
   git rebase -i $1
 }
 
@@ -37,6 +37,17 @@ function grb(){
   git rebase -i $1^
 }
 
+function git-squash-all-into() {
+  git add -A;
+  git commit --fixup $1;
+  GIT_SEQUENCE_EDITOR=: git rebase -i $1^;
+}
+
+function git-merge-squash-super() {
+  git merge --squash $1;
+  git add -A;
+  git commit -am "$1 (squashed)"
+}
 
 # Node
 alias nom='rm -rf node_modules && npm install'
