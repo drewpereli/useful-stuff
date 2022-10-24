@@ -1,0 +1,11 @@
+[
+  {
+    "title": "Lookarounds",
+    "data": [
+      ["(?=abc)", "Positive lookahead"],
+      ["(?<=abc)", "Positive lookbehind"],
+      ["(?!abc)", "Negative lookahead"],
+      ["(?<!abc)", "Negative lookbehind"]
+    ]
+  }
+]

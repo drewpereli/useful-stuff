@@ -2,7 +2,8 @@
   {
     "title": "File IO",
     "data": [
-      ["File.write(\"log.txt\", \"data...\")", "Write file"]
+      ["File.write(\"log.txt\", \"data...\")", "Write file"],
+      ["File.rename(source_path, target_path)", "Move/rename a file"]
     ]
   },
   {
