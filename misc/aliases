@@ -49,6 +49,21 @@ function git-merge-squash-super() {
   git commit -am "$1 (squashed)"
 }
 
+function copy-branch() {
+  echo "Looking for $1";
+  br=`git branch | grep "$1"`;
+
+  # echo "Looking for $1";
+  # br=`git branch | grep "$1"`;
+
+  if [[ -z "$br" ]]; then
+    echo "No branch matching $1";
+  else
+    echo "$br" | pbcopy;
+    echo "Copied $br to clipboard";
+  fi
+}
+
 # Node
 alias nom='rm -rf node_modules && npm install'
 alias nombom='npm cache clear && bower cache clean && rm -rf node_modules bower_components && npm install && bower install'
