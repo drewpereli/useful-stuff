@@ -43,12 +43,6 @@ function git-squash-all-into() {
   GIT_SEQUENCE_EDITOR=: git rebase -i $1^;
 }
 
-function git-merge-squash-super() {
-  git merge --squash $1;
-  git add -A;
-  git commit -am "$1 (squashed)"
-}
-
 function copy-branch() {
   echo "Looking for $1";
   br=`git branch | grep "$1"`;
