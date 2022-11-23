@@ -5,6 +5,7 @@ alias clear-downloads='rm -rf ~/Downloads/*'
 alias t='touch'
 alias sds='sh ./drew-scratch.sh'
 alias c='clear'
+alias x='exit 0'
 
 # Git
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset %an: %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset' --abbrev-commit --date=relative"
@@ -24,6 +25,7 @@ alias git-delete-backups='git checkout -q master && git branch | grep -E "\-\-ba
 alias git-reset-super='git clean -f -d && git reset --hard'
 alias gspum='git stash push -u -m'
 alias git-show-migration-commits='git log --oneline --follow master..@ -- ./db/migrate'
+alias gch='git checkout'
 
 function gria(){
   git rebase -i @~$1
