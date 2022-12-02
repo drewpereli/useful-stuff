@@ -41,7 +41,16 @@ async function tryRebaseOntoMaster() {
     if (confirmInput === 'Y') {
       console.log('Rebasing...');
       const hash = lastMaster.split(' ')[0];
-      await exec(`git rebase --onto master ${hash}`);
+      try {
+        await exec(`git rebase --onto master ${hash}`);
+      } catch (error) {
+        if (error.stderr && /^error: could not apply/) {
+          console.log(error.stderr);
+          return;
+        }
+
+        throw error;
+      }
     } else {
       console.log('Aborting');
     }
