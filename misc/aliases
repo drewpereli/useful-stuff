@@ -62,7 +62,7 @@ function copy-branch() {
 
 # Node
 alias nom='rm -rf node_modules && npm ci'
-alias nombom='npm cache clear && bower cache clean && rm -rf node_modules bower_components && ci && bower install'
+alias npm-relock='rm -rf node_modules && rm -rf package-lock.json && npm install'
 alias ni='node index.js'
 alias nds='node drew-scratch.js'
 alias nmds='nodemon drew-scratch.js'
