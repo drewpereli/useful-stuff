@@ -7,5 +7,11 @@
       ["(?!abc)", "Negative lookahead"],
       ["(?<!abc)", "Negative lookbehind"]
     ]
+  },
+  {
+    "title": "Captures",
+    "data": [
+      ["(?<Name>abc)", "Named capture"]
+    ]
   }
 ]
