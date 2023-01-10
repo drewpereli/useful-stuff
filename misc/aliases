@@ -55,7 +55,7 @@ function copy-branch() {
   if [[ -z "$br" ]]; then
     echo "No branch matching $1";
   else
-    echo "$br" | pbcopy;
+    echo "$br" | xargs echo -n | pbcopy;
     echo "Copied $br to clipboard";
   fi
 }
