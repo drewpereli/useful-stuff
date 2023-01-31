@@ -1,0 +1,104 @@
+#!/usr/bin/env node
+
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const node_util_1 = require("node:util");
+const node_child_process_1 = require("node:child_process");
+const promises_1 = __importDefault(require("node:fs/promises"));
+function setupDevBranches(branches) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // reset dev to master
+        yield exec('git checkout dev');
+        yield exec('git reset --hard master');
+        for (const branch of branches) {
+            yield rebaseOntoDev(branch);
+            yield squashIntoDev(branch);
+        }
+    });
+}
+function rebaseOntoDev(branch) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield exec(`git checkout ${branch}`);
+        const hash = yield getCommitToRebaseOnto();
+        yield exec(`git rebase --onto dev ${hash}`);
+    });
+}
+function squashIntoDev(branch) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield exec(`git checkout dev`);
+        yield exec(`git merge --squash ${branch} && git add -A && git commit -am "${branch} (squashed)"`);
+    });
+}
+const execPromise = (0, node_util_1.promisify)(node_child_process_1.exec);
+function exec(command) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { stdout } = yield execPromise(command);
+        return stdout.trim();
+    });
+}
+function main() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const cacheFile = '_setup-dev-branch-cache.json';
+        let branches = process.argv.slice(2);
+        const mustWriteCache = branches.length !== 0;
+        if (branches.length === 0) {
+            const ex = yield fileExists(cacheFile);
+            if (!ex) {
+                console.error('Branches not specified and no cache file found');
+                process.exit(1);
+            }
+            const cache = JSON.parse(yield promises_1.default.readFile(cacheFile, 'utf-8'));
+            console.log('Using cached branches:', cache.join(', '));
+            branches = cache;
+        }
+        yield setupDevBranches(branches);
+        if (mustWriteCache) {
+            yield promises_1.default.writeFile(cacheFile, JSON.stringify(branches), 'utf-8');
+        }
+        console.log('Done');
+    });
+}
+function fileExists(path) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield promises_1.default.access(path);
+            return true;
+        }
+        catch (_a) {
+            return false;
+        }
+    });
+}
+// We want to do rebase --onto dev {SOME_COMMIT_HASH}
+// This function finds the commit hash to use
+// Assumes that the desired rebase branch is checked out
+// It will look for the last commit that ends with "(squashed)", which is likely the last commit that was from dev
+// If it doesn't find one, it will just use the merge-base of master and the current branch
+function getCommitToRebaseOnto() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const glog = yield exec("git log --pretty=format:'%h %s'");
+        const lines = glog.split('\n');
+        const lastDev = lines.find((line) => {
+            const message = line.split(' ').slice(1).join(' ').trim();
+            return /\(squashed\)$/.test(message);
+        });
+        if (lastDev) {
+            return lastDev.split(' ')[0];
+        }
+        return yield exec('git merge-base master @');
+    });
+}
+main();
+//# sourceMappingURL=index.js.map
