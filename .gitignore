@@ -2,3 +2,4 @@ node_modules
 cheat-sheets/dist
 dist
 bin/_find-rails-schema-src/target
+bin/_namespace-svg-ids-src/target
