@@ -19,8 +19,13 @@ const node_child_process_1 = require("node:child_process");
 const promises_1 = __importDefault(require("node:fs/promises"));
 function setupDevBranches(branches) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (!(yield branchExists('dev'))) {
+            yield exec('git checkout -b dev');
+        }
+        else {
+            yield exec('git checkout dev');
+        }
         // reset dev to master
-        yield exec('git checkout dev');
         yield exec('git reset --hard master');
         for (const branch of branches) {
             yield rebaseOntoDev(branch);
@@ -32,12 +37,14 @@ function rebaseOntoDev(branch) {
     return __awaiter(this, void 0, void 0, function* () {
         yield exec(`git checkout ${branch}`);
         const hash = yield getCommitToRebaseOnto();
+        console.log(`Rebasing ${branch}...`);
         yield exec(`git rebase --onto dev ${hash}`);
     });
 }
 function squashIntoDev(branch) {
     return __awaiter(this, void 0, void 0, function* () {
         yield exec(`git checkout dev`);
+        console.log(`Squashing ${branch} into dev...`);
         yield exec(`git merge --squash ${branch} && git add -A && git commit -am "${branch} (squashed)"`);
     });
 }
@@ -98,6 +105,12 @@ function getCommitToRebaseOnto() {
             return lastDev.split(' ')[0];
         }
         return yield exec('git merge-base master @');
+    });
+}
+function branchExists(name) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const res = yield exec(`git branch --list ${name}`);
+        return !!res;
     });
 }
 main();

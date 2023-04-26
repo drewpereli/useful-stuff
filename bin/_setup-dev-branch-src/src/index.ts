@@ -3,8 +3,13 @@ import { exec as execCb } from 'node:child_process';
 import fs from 'node:fs/promises';
 
 async function setupDevBranches(branches: string[]) {
+  if (!(await branchExists('dev'))) {
+    await exec('git checkout -b dev');
+  } else {
+    await exec('git checkout dev');
+  }
+
   // reset dev to master
-  await exec('git checkout dev');
   await exec('git reset --hard master');
 
   for (const branch of branches) {
@@ -98,6 +103,12 @@ async function getCommitToRebaseOnto() {
   }
 
   return await exec('git merge-base master @');
+}
+
+async function branchExists(name: string) {
+  const res = await exec(`git branch --list ${name}`);
+
+  return !!res;
 }
 
 main();
