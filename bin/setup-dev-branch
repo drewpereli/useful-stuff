@@ -31,6 +31,7 @@ function setupDevBranches(branches) {
             yield rebaseOntoDev(branch);
             yield squashIntoDev(branch);
         }
+        yield exec(`git checkout ${branches[branches.length - 1]}`);
     });
 }
 function rebaseOntoDev(branch) {

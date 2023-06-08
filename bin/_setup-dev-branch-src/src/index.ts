@@ -16,6 +16,8 @@ async function setupDevBranches(branches: string[]) {
     await rebaseOntoDev(branch);
     await squashIntoDev(branch);
   }
+
+  await exec(`git checkout ${branches[branches.length - 1]}`);
 }
 
 async function rebaseOntoDev(branch: string) {
