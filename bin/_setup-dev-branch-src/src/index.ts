@@ -9,21 +9,23 @@ async function setupDevBranches(branches: string[]) {
     await exec('git checkout dev');
   }
 
+  const mainBranch = await getMainBranchName();
+
   // reset dev to master
-  await exec('git reset --hard master');
+  await exec(`git reset --hard ${mainBranch}`);
 
   for (const branch of branches) {
-    await rebaseOntoDev(branch);
+    await rebaseOntoDev(branch, mainBranch);
     await squashIntoDev(branch);
   }
 
   await exec(`git checkout ${branches[branches.length - 1]}`);
 }
 
-async function rebaseOntoDev(branch: string) {
+async function rebaseOntoDev(branch: string, mainBranch: string) {
   await exec(`git checkout ${branch}`);
 
-  const hash = await getCommitToRebaseOnto();
+  const hash = await getCommitToRebaseOnto(mainBranch);
 
   console.log(`Rebasing ${branch}...`);
 
@@ -91,7 +93,7 @@ async function fileExists(path: string) {
 // Assumes that the desired rebase branch is checked out
 // It will look for the last commit that ends with "(squashed)", which is likely the last commit that was from dev
 // If it doesn't find one, it will just use the merge-base of master and the current branch
-async function getCommitToRebaseOnto() {
+async function getCommitToRebaseOnto(mainBranch: string) {
   const glog = await exec("git log --pretty=format:'%h %s'");
   const lines = glog.split('\n');
 
@@ -104,13 +106,23 @@ async function getCommitToRebaseOnto() {
     return lastDev.split(' ')[0];
   }
 
-  return await exec('git merge-base master @');
+  return await exec(`git merge-base ${mainBranch} @`);
 }
 
 async function branchExists(name: string) {
   const res = await exec(`git branch --list ${name}`);
 
   return !!res;
+}
+
+async function getMainBranchName() {
+  const mainExists = await branchExists('main');
+
+  if (mainExists) {
+    return 'main';
+  }
+
+  return 'master';
 }
 
 main();

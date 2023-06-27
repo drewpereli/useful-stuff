@@ -25,19 +25,20 @@ function setupDevBranches(branches) {
         else {
             yield exec('git checkout dev');
         }
+        const mainBranch = yield getMainBranchName();
         // reset dev to master
-        yield exec('git reset --hard master');
+        yield exec(`git reset --hard ${mainBranch}`);
         for (const branch of branches) {
-            yield rebaseOntoDev(branch);
+            yield rebaseOntoDev(branch, mainBranch);
             yield squashIntoDev(branch);
         }
         yield exec(`git checkout ${branches[branches.length - 1]}`);
     });
 }
-function rebaseOntoDev(branch) {
+function rebaseOntoDev(branch, mainBranch) {
     return __awaiter(this, void 0, void 0, function* () {
         yield exec(`git checkout ${branch}`);
-        const hash = yield getCommitToRebaseOnto();
+        const hash = yield getCommitToRebaseOnto(mainBranch);
         console.log(`Rebasing ${branch}...`);
         yield exec(`git rebase --onto dev ${hash}`);
     });
@@ -94,7 +95,7 @@ function fileExists(path) {
 // Assumes that the desired rebase branch is checked out
 // It will look for the last commit that ends with "(squashed)", which is likely the last commit that was from dev
 // If it doesn't find one, it will just use the merge-base of master and the current branch
-function getCommitToRebaseOnto() {
+function getCommitToRebaseOnto(mainBranch) {
     return __awaiter(this, void 0, void 0, function* () {
         const glog = yield exec("git log --pretty=format:'%h %s'");
         const lines = glog.split('\n');
@@ -105,13 +106,22 @@ function getCommitToRebaseOnto() {
         if (lastDev) {
             return lastDev.split(' ')[0];
         }
-        return yield exec('git merge-base master @');
+        return yield exec(`git merge-base ${mainBranch} @`);
     });
 }
 function branchExists(name) {
     return __awaiter(this, void 0, void 0, function* () {
         const res = yield exec(`git branch --list ${name}`);
         return !!res;
+    });
+}
+function getMainBranchName() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const mainExists = yield branchExists('main');
+        if (mainExists) {
+            return 'main';
+        }
+        return 'master';
     });
 }
 main();
