@@ -31,6 +31,7 @@ alias gspum='git stash push -u -m'
 alias git-show-migration-commits='git log --oneline --follow master..@ -- ./db/migrate'
 alias gch='git checkout'
 alias gh-deploy-staging='git rev-parse --abbrev-ref HEAD | xargs gh workflow run "Deploy Staging" --ref'
+alias gh-inv-pr='gh pr create -r jfranz -f'
 
 function gria(){
   git rebase -i @~$1
