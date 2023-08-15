@@ -86,6 +86,8 @@ alias r='rails'
 alias rdbm='rails db:migrate'
 alias rdbms='rails db:migrate:status'
 alias update-schema-rebase='git reset HEAD db/schema.rb && git checkout db/schema.rb && rails db:migrate && git add -A'
+alias update-npm-rebase='git reset HEAD package-lock.json && git checkout package-lock.json && npm install && git add -A'
+alias update-yarn-rebase='git reset HEAD yarn.lock && git checkout yarn.lock && npm install && git add -A'
 
 function rdbr(){
   local steps="${1:-"1"}"
