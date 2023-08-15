@@ -1,0 +1,10 @@
+[
+  {
+    "title": "Basic Commands",
+    "data": [
+      ["\\l", "List databases"],
+      ["\\c my-database", "Select database"],
+      ["\\d", "Show tables"]
+    ]
+  }
+]
