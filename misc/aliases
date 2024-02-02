@@ -66,12 +66,22 @@ function copy-branch() {
   fi
 }
 
+# Get a remote branch in local
+function git-get-remote() {
+  git checkout master;
+  git checkout -b $1;
+  git fetch origin $1;
+  git reset --hard origin/$1;
+}
+
 # Node
 alias nom='rm -rf node_modules && npm ci'
 alias npm-relock='rm -rf node_modules && rm -rf package-lock.json && npm install'
 alias ni='node index.js'
 alias nds='node drew-scratch.js'
 alias nmds='nodemon drew-scratch.js'
+alias update-npm-rebase='git reset HEAD package-lock.json && git checkout package-lock.json && npm install && git add -A'
+alias update-yarn-rebase='git reset HEAD yarn.lock && git checkout yarn.lock && npm install && git add -A'
 
 # Postgres
 alias restart-postgres="rm /usr/local/var/postgres/postmaster.pid; launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist; launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
@@ -86,8 +96,7 @@ alias r='rails'
 alias rdbm='rails db:migrate'
 alias rdbms='rails db:migrate:status'
 alias update-schema-rebase='git reset HEAD db/schema.rb && git checkout db/schema.rb && rails db:migrate && git add -A'
-alias update-npm-rebase='git reset HEAD package-lock.json && git checkout package-lock.json && npm install && git add -A'
-alias update-yarn-rebase='git reset HEAD yarn.lock && git checkout yarn.lock && npm install && git add -A'
+alias rc='rails console -- --nomultiline'
 
 function rdbr(){
   local steps="${1:-"1"}"
