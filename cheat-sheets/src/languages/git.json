@@ -7,5 +7,11 @@
       ["git bisect good; git bisect bad;", "Mark the current commit as good or bad"],
       ["git bisect reset", "Reset the bisect state"]
     ]
+  },
+  {
+    "title": "Misc",
+    "data": [
+      ["git show my-branch:my-file.ts | code -", "View file from another branch in VS Code"]
+    ]
   }
 ]
