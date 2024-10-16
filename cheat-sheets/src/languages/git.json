@@ -11,7 +11,8 @@
   {
     "title": "Misc",
     "data": [
-      ["git show my-branch:my-file.ts | code -", "View file from another branch in VS Code"]
+      ["git show my-branch:my-file.ts | code -", "View file from another branch in VS Code"],
+      ["git log remotename/branchname", "View commit history on a remote branch"]
     ]
   }
 ]
