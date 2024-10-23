@@ -92,6 +92,7 @@ alias install-missing-ruby="brew update && brew upgrade ruby-build && rbenv inst
 alias fs='foreman start'
 alias beg='bundle exec guard'
 alias ber='bundle exec rubocop'
+alias berc="git status --porcelain | grep '^\s*[AM?]' | awk '{print \$2}' | xargs bundle exec rubocop -A" # run rubocop on changed/new files
 alias r='rails'
 alias rdbm='rails db:migrate'
 alias rdbms='rails db:migrate:status'
