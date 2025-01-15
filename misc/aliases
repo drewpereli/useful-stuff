@@ -90,6 +90,7 @@ alias snapdb="psql -U postgres -d snap_sandbox_development"
 # Ruby
 alias install-missing-ruby="brew update && brew upgrade ruby-build && rbenv install"
 alias fs='foreman start'
+alias frrc='foreman run rails c'
 alias beg='bundle exec guard'
 alias ber='bundle exec rubocop'
 alias berc="git status --porcelain | grep '^\s*[AM?]' | awk '{print \$2}' | xargs bundle exec rubocop -A" # run rubocop on changed/new files
