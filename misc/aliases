@@ -19,12 +19,10 @@ alias gcam='git commit -am'
 alias gca='git commit --amend'
 alias gcan='git commit --amend --no-edit'
 alias gcaan='git commit -a --amend --no-edit'
-alias gp='git push'
+alias gp='git push -u origin $(git rev-parse --abbrev-ref HEAD)'
 alias ga='git add'
 alias gaa='git add -A'
 alias grc='GIT_EDITOR=true git rebase --continue'
-alias git-delete-squashed='git checkout -q master && git for-each-ref refs/heads/ "--format=%(refname:short)" | while read branch; do mergeBase=$(git merge-base master $branch) && [[ $(git cherry master $(git commit-tree $(git rev-parse $branch\^{tree}) -p $mergeBase -m _)) == "-"* ]] && git branch -D $branch; done'
-alias git-delete-squashed-main='git checkout -q main && git for-each-ref refs/heads/ "--format=%(refname:short)" | while read branch; do mergeBase=$(git merge-base main $branch) && [[ $(git cherry main $(git commit-tree $(git rev-parse $branch\^{tree}) -p $mergeBase -m _)) == "-"* ]] && git branch -D $branch; done'
 alias git-delete-backups='git checkout -q master && git branch | grep -E "\-\-backup-\d+$" | xargs git branch -D'
 alias git-reset-super='git clean -f -d && git reset --hard'
 alias gspum='git stash push -u -m'
@@ -32,6 +30,20 @@ alias git-show-migration-commits='git log --oneline --follow master..@ -- ./db/m
 alias gch='git checkout'
 alias gh-deploy-staging='git rev-parse --abbrev-ref HEAD | xargs gh workflow run "Deploy Staging" --ref'
 alias gh-inv-pr='gh pr create -r jfranz -b "" -f'
+
+function git-delete-squashed(){
+  if git show-ref --verify --quiet refs/heads/master; then
+    rootBranch="master"
+  elif git show-ref --verify --quiet refs/heads/main; then
+    rootBranch="main"
+  else
+    echo "Error: Neither master nor main branch exists."
+    return 1
+  fi
+  
+  git checkout -q $rootBranch;
+  git for-each-ref refs/heads/ "--format=%(refname:short)" | while read branch; do mergeBase=$(git merge-base $rootBranch $branch) && [[ $(git cherry $rootBranch $(git commit-tree $(git rev-parse $branch\^{tree}) -p $mergeBase -m _)) == "-"* ]] && git branch -D $branch; done
+}
 
 function gria(){
   git rebase -i @~$1
@@ -106,10 +118,4 @@ function rdbr(){
 }
 
 # Ember
-alias em='ember'
-alias ems='ember serve'
-alias emt='ember test'
-alias emts='ember test --server'
-alias emx='ember exam'
-alias emxs='ember exam --server'
-alias emxsf='ember exam --server --file=path='
+alias em='npx ember'
