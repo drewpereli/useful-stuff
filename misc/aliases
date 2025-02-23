@@ -119,3 +119,7 @@ function rdbr(){
 
 # Ember
 alias em='npx ember'
+
+# Aptible
+alias aptible-login='aptible login --email=drew@invibe.co --lifetime=7d --password=$(op read "op://Private/Aptible/password") --otp-token=$(op read "op://Private/Aptible/one-time password?attribute=otp")'
+alias aptible-snap-staging='aptible ssh rails c -r staging-us'
