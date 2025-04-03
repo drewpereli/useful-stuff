@@ -25,11 +25,15 @@ alias gaa='git add -A'
 alias grc='GIT_EDITOR=true git rebase --continue'
 alias git-delete-backups='git checkout -q master && git branch | grep -E "\-\-backup-\d+$" | xargs git branch -D'
 alias git-reset-super='git clean -f -d && git reset --hard'
-alias gspum='git stash push -u -m'
 alias git-show-migration-commits='git log --oneline --follow master..@ -- ./db/migrate'
 alias gch='git checkout'
 alias gh-deploy-staging='git rev-parse --abbrev-ref HEAD | xargs gh workflow run "Deploy Staging" --ref'
 alias gh-inv-pr='gh pr create -r jfranz -b "" -f'
+alias gh-draft-pr='gh pr create -b "" -f -d'
+
+function gspum() {
+  git stash push -u -m "${1:-tmp}"
+}
 
 function git-delete-squashed(){
   if git show-ref --verify --quiet refs/heads/master; then
@@ -111,6 +115,7 @@ alias rdbm='rails db:migrate'
 alias rdbms='rails db:migrate:status'
 alias update-schema-rebase='git reset HEAD db/schema.rb && git checkout db/schema.rb && rails db:migrate && git add -A'
 alias rc='rails console -- --nomultiline'
+alias frs='find-rails-schema'
 
 function rdbr(){
   local steps="${1:-"1"}"
@@ -124,3 +129,4 @@ alias em='npx ember'
 alias aptible-login='aptible login --email=drew@invibe.co --lifetime=7d --password=$(op read "op://Private/Aptible/password") --otp-token=$(op read "op://Private/Aptible/one-time password?attribute=otp")'
 alias aptible-snap-staging='aptible ssh rails c -r staging-us'
 alias aptible-snap-prod='aptible ssh rails c -r production-us'
+alias aptible-snap-production='aptible-snap-prod'
