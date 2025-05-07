@@ -35,10 +35,20 @@ async function rebaseOntoDev(branch: string, mainBranch: string) {
 async function squashIntoDev(branch: string) {
   await exec(`git checkout dev`);
 
+
+  await exec(`git merge --squash ${branch}`);
+
+  const hasChanges = !!(await exec('git status --porcelain'));
+
+  if (!hasChanges) {
+    console.log(`No changes to squash from ${branch}`);
+    return;
+  }
+
   console.log(`Squashing ${branch} into dev...`);
 
   await exec(
-    `git merge --squash ${branch} && git add -A && git commit -am "${branch} (squashed)"`
+    `git add -A && git commit -am "${branch} (squashed)" --no-verify`
   );
 }
 
