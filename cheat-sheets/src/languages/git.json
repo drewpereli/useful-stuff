@@ -2,17 +2,44 @@
   {
     "title": "Bisect",
     "data": [
-      ["git bisect start @ #abcdef --", "Start a bisect where @ is bad and #abcdef is good"],
-      ["git bisect run something", "Run a command for each commit in the bisect, and use the return value to determine if it's good or bad"],
-      ["git bisect good; git bisect bad;", "Mark the current commit as good or bad"],
-      ["git bisect reset", "Reset the bisect state"]
+      [
+        "git bisect start @ #abcdef --",
+        "Start a bisect where @ is bad and #abcdef is good"
+      ],
+      [
+        "git bisect run something",
+        "Run a command for each commit in the bisect, and use the return value to determine if it's good or bad"
+      ],
+      [
+        "git bisect good; git bisect bad;",
+        "Mark the current commit as good or bad"
+      ],
+      [
+        "git bisect reset",
+        "Reset the bisect state"
+      ]
+    ]
+  },
+  {
+    "title": "Stash",
+    "data": [
+      [
+        "git stash push my/file/here.ts",
+        "Stash a specific file"
+      ]
     ]
   },
   {
     "title": "Misc",
     "data": [
-      ["git show my-branch:my-file.ts | code -", "View file from another branch in VS Code"],
-      ["git log remotename/branchname", "View commit history on a remote branch"]
+      [
+        "git show my-branch:my-file.ts | code -",
+        "View file from another branch in VS Code"
+      ],
+      [
+        "git log remotename/branchname",
+        "View commit history on a remote branch"
+      ]
     ]
   }
 ]
