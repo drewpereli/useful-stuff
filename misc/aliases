@@ -6,6 +6,7 @@ alias t='touch'
 alias sds='sh ./drew-scratch.sh'
 alias c='clear'
 alias x='exit 0'
+alias ll='ls -lah'
 
 touchp() { mkdir -p "$(dirname "$1")" && touch "$1" ; }
 
