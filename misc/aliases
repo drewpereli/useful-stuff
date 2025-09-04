@@ -11,6 +11,7 @@ alias ll='ls -lah'
 touchp() { mkdir -p "$(dirname "$1")" && touch "$1" ; }
 
 # Git
+alias curr-branch="git rev-parse --abbrev-ref HEAD"
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset %an: %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset' --abbrev-commit --date=relative"
 alias gs='git status -sb'
 alias gc='git commit'
@@ -31,6 +32,7 @@ alias gch='git checkout'
 alias gh-deploy-staging='git rev-parse --abbrev-ref HEAD | xargs gh workflow run "Deploy Staging" --ref'
 alias gh-inv-pr='gh pr create -r jfranz -b "" -f'
 alias gh-draft-pr='gh pr create -b "" -f -d'
+alias gh-view-branch='gh repo view -b $(curr-branch) -w'
 
 function gspum() {
   git stash push -u -m "${1:-tmp}"
