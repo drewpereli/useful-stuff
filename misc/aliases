@@ -33,22 +33,14 @@ alias gh-deploy-staging='git rev-parse --abbrev-ref HEAD | xargs gh workflow run
 alias gh-inv-pr='gh pr create -r jfranz -b "" -f'
 alias gh-draft-pr='gh pr create -b "" -f -d'
 alias gh-view-branch='gh repo view -b $(curr-branch) -w'
+alias whos-using-staging='git --no-pager fetch staging-us master && git log staging-us/master --max-count=1 --pretty="format:%an"'
 
 function gspum() {
   git stash push -u -m "${1:-tmp}"
 }
 
 function git-delete-squashed(){
-  if git show-ref --verify --quiet refs/heads/master; then
-    rootBranch="master"
-  elif git show-ref --verify --quiet refs/heads/main; then
-    rootBranch="main"
-  else
-    echo "Error: Neither master nor main branch exists."
-    return 1
-  fi
-  
-  git checkout -q $rootBranch;
+  git checkout -q $git_main_branch;
   git for-each-ref refs/heads/ "--format=%(refname:short)" | while read branch; do mergeBase=$(git merge-base $rootBranch $branch) && [[ $(git cherry $rootBranch $(git commit-tree $(git rev-parse $branch\^{tree}) -p $mergeBase -m _)) == "-"* ]] && git branch -D $branch; done
 }
 
@@ -87,7 +79,7 @@ function copy-branch() {
 
 # Get a remote branch in local
 function git-get-remote() {
-  git checkout master;
+  git checkout $git_main_branch;
   git checkout -b $1;
   git fetch origin $1;
   git reset --hard origin/$1;
@@ -101,6 +93,7 @@ alias nds='node drew-scratch.js'
 alias nmds='nodemon drew-scratch.js'
 alias update-npm-rebase='git reset HEAD package-lock.json && git checkout package-lock.json && npm install && git add -A'
 alias update-yarn-rebase='git reset HEAD yarn.lock && git checkout yarn.lock && npm install && git add -A'
+alias update-bun-rebase='git reset HEAD bun.lockb && git checkout bun.lockb && bun install && git add bun.lockb'
 
 # Postgres
 alias restart-postgres="rm /usr/local/var/postgres/postmaster.pid; launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist; launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist"
