@@ -46,9 +46,9 @@ export const DecisionSchema = z.object({
 export type ClaudeDecision = z.infer<typeof DecisionSchema>;
 
 // Environment configuration
-export const DEBUG = process.env.INVIBE_AGENT_PERMISSION_REQUEST_HOOK_DEBUG === '1';
-export const DRY_RUN = process.env.INVIBE_AGENT_PERMISSION_REQUEST_HOOK_DRY_RUN === '1';
-export const LOG_ENABLED = process.env.INVIBE_AGENT_PERMISSION_REQUEST_HOOK_LOG === '1';
+export const DEBUG = process.env.CLAUDE_GLOBAL_PERMISSION_REQUEST_HOOK_DEBUG === '1';
+export const DRY_RUN = process.env.CLAUDE_GLOBAL_PERMISSION_REQUEST_HOOK_DRY_RUN === '1';
+export const LOG_ENABLED = process.env.CLAUDE_GLOBAL_PERMISSION_REQUEST_HOOK_LOG === '1';
 
 // Generate a unique run ID for this execution
 const runId = randomBytes(4).toString('hex');
@@ -181,29 +181,28 @@ export async function loadPolicy() {
   } catch (err) {
     debug('Failed to load policy, using embedded fallback:', (err as Error).message);
     // Embedded fallback policy
-    return `# Permission Policy for inVibe Agent
+    return `# Permission Policy (Global Hook)
 
-## Mission
-Reduce approval fatigue. Auto-approve normal analysis operations. Only prompt for destructive actions.
+## Auto-Approve
+- Build & test: running tests, linters, formatters
+- Package scripts: npm run, bundle exec, yarn, make
+- Database reads: SELECT, EXPLAIN, PRAGMA
 
-## Auto-Approval (GREEN)
-1. Read operations (Read, Glob, Grep, cat, ls, find)
-2. Analysis work (creating/editing files in workspaces/)
-3. Database SELECT queries
-4. Running scripts from .claude/ or workspaces/
-5. Standard development (npm install, git operations)
+## Use Judgment
+- Git: approve routine add/commit on feature branches, prompt for push --force or operations on main
+- New deps: well-known packages are probably fine, prompt if unsure
+- File deletion: single generated files vs rm -rf of directories
 
-## Prompt User (YELLOW)
-- Destructive: rm -rf, DROP TABLE, DELETE without WHERE
-- System-level: shutdown, chmod on system dirs
-- Irreversible: force push to main
+## Always Prompt
+- Force push to main, bulk rm -rf, DROP TABLE, DELETE without WHERE
+- System changes, untrusted scripts, docker/infra destruction
 
-## Decision Framework
-1. Read operation? → AUTO-APPROVE
-2. Modifies workspaces/, .claude/, docs/, plans/? → AUTO-APPROVE
-3. Standard dev task? → AUTO-APPROVE
-4. Irreversible data loss? → PROMPT
-5. When in doubt → PROMPT (safer default)
+## Decision Logic
+1. Clearly safe dev operation → AUTO-APPROVE
+2. Needs context → use judgment, lean toward PROMPT
+3. Risks data loss → PROMPT
+4. Malformed → AUTO-DENY
+5. When in doubt → PROMPT
 `;
   }
 }
@@ -216,7 +215,7 @@ export async function evaluateWithClaude(
   input: HookInput,
   policy: string
 ): Promise<ClaudeDecision> {
-  const prompt = `You are evaluating a tool permission request for the inVibe Agent. Based on the policy below, decide whether to AUTO-APPROVE, PROMPT, or AUTO-DENY this operation.
+  const prompt = `You are evaluating a tool permission request for Claude Code. Based on the policy below, decide whether to AUTO-APPROVE, PROMPT, or AUTO-DENY this operation.
 
 You have access to Read, Glob, and other tools to check file context if needed for your decision.
 
@@ -264,7 +263,7 @@ Always include a message explaining your reasoning.`;
           // Disable the permission hook for this evaluating agent to prevent recursion
           env: {
             ...process.env,
-            INVIBE_AGENT_PERMISSION_REQUEST_HOOK_DISABLE: '1',
+            CLAUDE_GLOBAL_PERMISSION_REQUEST_HOOK_DISABLE: '1',
           },
           // Use structured outputs for reliable parsing
           outputFormat: {
