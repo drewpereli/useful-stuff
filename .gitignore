@@ -3,3 +3,5 @@ cheat-sheets/dist
 dist
 bin/_find-rails-schema-src/target
 bin/_namespace-svg-ids-src/target
+bin/claude-permission-request-hook/hook-decisions.jsonl
+bin/claude-permission-request-hook/debug.log

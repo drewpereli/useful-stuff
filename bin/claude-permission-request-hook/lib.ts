@@ -20,6 +20,7 @@ export const HookInputSchema = z.object({
   tool_input: z.record(z.string(), z.unknown()),
   cwd: z.string(),
   permission_suggestions: z.array(z.unknown()).optional(), // New field (accepted but not used initially)
+  permission_mode: z.enum(['default', 'plan', 'acceptEdits', 'dontAsk', 'bypassPermissions'])
 });
 
 // Type definitions
@@ -362,6 +363,17 @@ Always include a message explaining your reasoning.`;
  */
 export async function evaluatePermission(input: HookInput): Promise<HookDecision | null> {
   debug('Evaluating permission:', JSON.stringify(input, null, 2));
+
+  // Edit/Write tools should always go to the user dialog unless permission mode already covers them
+  if (
+    (input.tool_name === 'Edit' || input.tool_name === 'Write') &&
+    input.permission_mode !== 'acceptEdits' &&
+    input.permission_mode !== 'bypassPermissions'
+  ) {
+    debug('Edit/Write tool in restricted permission mode, passing through to user dialog');
+    await logDecision(input.tool_name, input.tool_input, 'claude-cli', 'passthrough', 'Edit/Write skipped — permission mode requires user approval');
+    return null;
+  }
 
   // Load policy
   const policy = await loadPolicy();
