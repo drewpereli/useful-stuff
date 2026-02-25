@@ -364,6 +364,13 @@ Always include a message explaining your reasoning.`;
 export async function evaluatePermission(input: HookInput): Promise<HookDecision | null> {
   debug('Evaluating permission:', JSON.stringify(input, null, 2));
 
+  // Always ask to exit plan mode
+  if (input.tool_name === 'ExitPlanMode') {
+    debug('Exit plan mode tool, passing through to user dialog');
+    await logDecision(input.tool_name, input.tool_input, 'claude-cli', 'passthrough', 'Exit plan mode skipped');
+    return null;
+  }
+  
   // Edit/Write tools should always go to the user dialog unless permission mode already covers them
   if (
     (input.tool_name === 'Edit' || input.tool_name === 'Write') &&
