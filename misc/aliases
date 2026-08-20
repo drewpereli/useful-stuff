@@ -44,6 +44,55 @@ function git-delete-squashed(){
   git for-each-ref refs/heads/ "--format=%(refname:short)" | while read branch; do mergeBase=$(git merge-base $(git_main_branch) $branch) && [[ $(git cherry $(git_main_branch) $(git commit-tree $(git rev-parse $branch\^{tree}) -p $mergeBase -m _)) == "-"* ]] && git branch -D $branch; done
 }
 
+# Delete local branches whose PR was merged into main/master, per GitHub, along
+# with any worktree checked out on them.
+# Unlike git-delete-squashed, this works when the PR had commits that never
+# landed in the local branch.
+#   -n / --dry-run  list what would be deleted, change nothing
+#   -f / --force    remove worktrees even if they have uncommitted changes
+function git-delete-merged-branches(){
+  local main_branch merged_heads primary_wt branch wt dry_run force
+  main_branch=$(git_main_branch) || return 1
+
+  while [[ -n "$1" ]]; do
+    case "$1" in
+      -n|--dry-run) dry_run=1 ;;
+      -f|--force) force=1 ;;
+      *) echo "git-delete-merged-branches: unknown option $1" >&2; return 1 ;;
+    esac
+    shift
+  done
+
+  merged_heads=$(gh pr list --state merged --base "$main_branch" --limit 500 --json headRefName --jq '.[].headRefName') || return 1
+  primary_wt=$(git worktree list --porcelain | awk 'NR==1{print $2; exit}')
+
+  git for-each-ref refs/heads/ "--format=%(refname:short)" | while read -r branch; do
+    [[ "$branch" == "$main_branch" ]] && continue
+    printf '%s\n' "$merged_heads" | grep -qxF -- "$branch" || continue
+
+    wt=$(git worktree list --porcelain | awk -v ref="refs/heads/$branch" '/^worktree /{p=$2} /^branch /{if ($2==ref) {print p; exit}}')
+
+    if [[ -n "$dry_run" ]]; then
+      if [[ -n "$wt" && "$wt" != "$primary_wt" ]]; then
+        echo "Would delete $branch (and worktree $wt)"
+      else
+        echo "Would delete $branch"
+      fi
+      continue
+    fi
+
+    if [[ "$wt" == "$primary_wt" ]]; then
+      # Branch is checked out in the main working copy; step off it first.
+      git -C "$primary_wt" checkout -q "$main_branch" || { echo "Skipping $branch: could not check out $main_branch" >&2; continue; }
+    elif [[ -n "$wt" ]]; then
+      git worktree remove ${force:+--force} "$wt" || { echo "Skipping $branch: worktree $wt has uncommitted changes (use --force)" >&2; continue; }
+      echo "Removed worktree $wt"
+    fi
+
+    git branch -D "$branch"
+  done
+}
+
 function gria(){
   git rebase -i @~$1
 }
