@@ -112,6 +112,7 @@ alias rdbms='rails db:migrate:status'
 alias update-schema-rebase='git reset HEAD db/schema.rb && git checkout db/schema.rb && rails db:migrate && git add -A'
 alias rc='rails console -- --nomultiline'
 alias frs='find-rails-schema'
+alias update-bundle-rebase='git checkout HEAD -- Gemfile.lock && bundle install && git add -A'
 
 function rdbr(){
   local steps="${1:-"1"}"

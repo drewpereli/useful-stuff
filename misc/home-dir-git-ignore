@@ -19,3 +19,5 @@ drew_scratch*
 /.vscode/
 *.rdb
 _setup-dev-branch-cache.json
+
+**/.claude/settings.local.json
