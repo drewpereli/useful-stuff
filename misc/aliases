@@ -93,6 +93,16 @@ function git-delete-merged-branches(){
   done
 }
 
+# Get back to a clean main/master: check it out, pull it, prune merged branches.
+# Any args (-n/--dry-run, -f/--force) are passed to git-delete-merged-branches.
+function git-sync-main(){
+  local main_branch
+  main_branch=$(git_main_branch) || return 1
+  git checkout "$main_branch" || return 1
+  git pull origin "$main_branch" || return 1
+  git-delete-merged-branches "$@"
+}
+
 function gria(){
   git rebase -i @~$1
 }
