@@ -136,12 +136,20 @@ function copy-branch() {
   fi
 }
 
-# Get a remote branch in local
+# Get a remote branch in local, matching origin exactly.
 function git-get-remote() {
-  git checkout $git_main_branch;
-  git checkout -b $1;
-  git fetch origin $1;
-  git reset --hard origin/$1;
+  local branch="$1"
+  [[ -n "$branch" ]] || { echo "git-get-remote: branch name required" >&2; return 1; }
+
+  git fetch origin "$branch" || return 1
+
+  if git show-ref --verify --quiet "refs/heads/$branch"; then
+    git switch "$branch" || return 1
+  else
+    git switch -c "$branch" || return 1
+  fi
+
+  git reset --hard "origin/$branch"
 }
 
 # Node
