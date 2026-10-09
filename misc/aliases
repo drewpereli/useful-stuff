@@ -152,6 +152,16 @@ function git-get-remote() {
   git reset --hard "origin/$branch"
 }
 
+# Open a Linear issue in the browser. Defaults to the ID in the current branch
+# name (e.g. inv-5849-some-title -> INV-5849).
+function open-linear-issue() {
+  local id="$1"
+  if [[ -z "$id" ]]; then
+    id=$(git rev-parse --abbrev-ref HEAD | grep -oE '^[A-Za-z]+-[0-9]+') || { echo "open-linear-issue: no issue ID in branch name" >&2; return 1; }
+  fi
+  open "https://linear.app/${LINEAR_WORKSPACE:-invibe}/issue/${id:u}"
+}
+
 # Node
 alias nom='rm -rf node_modules && npm ci'
 alias npm-relock='rm -rf node_modules && rm -rf package-lock.json && npm install'
